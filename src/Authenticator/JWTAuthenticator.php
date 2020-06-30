@@ -4,6 +4,7 @@
 namespace App\Authenticator;
 
 use App\Entity\User;
+use App\Facade\JWT;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,6 +49,11 @@ class JWTAuthenticator implements AuthenticatorInterface
 
     public function authenticate(Request $request): PassportInterface
     {
+        if($request->headers->has('Authorization')){
+            $jwt = JWT::decode($request->headers->get('Authorization'));
+            $this->logger->info(json_encode($jwt));
+        }
+
         $user = new \App\Entity\User();
         return new Passport($user, new PasswordCredentials($request->get('password')), [
         ]);
@@ -64,13 +70,16 @@ class JWTAuthenticator implements AuthenticatorInterface
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        if ($request->getContentType() === 'application/json') {
+
+        }
         return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
 
-        $this->logger->error("Authentication failed. ".$exception->getMessage());
+        $this->logger->error("Authentication failed. " . $exception->getMessage());
         return null;
 //        return new JsonResponse(["status" => "auth_failed"], Response::HTTP_UNAUTHORIZED);
     }
@@ -98,6 +107,8 @@ class JWTAuthenticator implements AuthenticatorInterface
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         // todo find the user by credentials in db
+        // the user provider will be part of the application, not the bundle
+        // this will not be dependent on doctrine.
         return new User();
     }
 
@@ -109,7 +120,7 @@ class JWTAuthenticator implements AuthenticatorInterface
 
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
+        return false;
     }
 
     public function createAuthenticatedToken(UserInterface $user, string $providerKey)

@@ -7,7 +7,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController
+class DefaultController extends AbstractController
 {
 
     /**
@@ -15,6 +15,19 @@ class DefaultController
      */
     public function indexAction()
     {
-        return new JsonResponse(["asd" => true]);
+        $apiResponse = ["asd" => true];
+
+//        if($this->getUser()){
+//           $apiResponse["meta"] = [
+//               "roles" => $this->getUser()->getRoles(),
+////               'token' => $this->getUser()->getToken()
+//           ] ;
+//
+//        }
+
+
+        return $this->json($apiResponse);
+
+//        return new JsonResponse($apiResponse);
     }
 }
