@@ -70,9 +70,7 @@ class JWTAuthenticator implements AuthenticatorInterface
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($request->getContentType() === 'application/json') {
-
-        }
+        $this->logger->info("successful auth");
         return null;
     }
 
