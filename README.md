@@ -1,1 +1,1 @@
-# jwt-symfony
+# JWT token handling / auth bundle for the new Symfony 5.1 authentication guard system
